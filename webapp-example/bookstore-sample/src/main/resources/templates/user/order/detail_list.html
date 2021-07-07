@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+<script th:inline="javascript">
+	function pay() {
+		location.href = "/user/order/pay?uoid=[[${userorder.uoid}]]";
+	}
+</script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::user_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/user/order/list">管理</a>
+							<a class="breadcrumb-item" href="/user/order/list">订单管理</a>
+							<span class="breadcrumb-item active">订单详情</span>
+						</nav>
+
+						<table class="table table-hover" style="margin-top: 10px">
+							<thead>
+								<tr>
+									<th>订单ID</th>
+									<th>图书ID</th>
+									<th>图书名称</th>
+									<th>ISBN</th>
+									<th>分类</th>
+									<th>出版社</th>
+									<th>单价</th>
+									<th>数量</th>
+									<th>总价</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item:${userorder.orderitem}">
+									<td>
+										<span th:text="${item.oiid}"></span>
+									</td>
+									<td>
+										<span th:text="${item.book.bid}"></span>
+									</td>
+									<td>
+										<span th:text="${item.book.bname}"></span>
+									</td>
+									<td>
+										<span th:text="${item.book.isbn}"></span>
+									</td>
+									<td>
+										<span th:text="${item.book.booktype.tname}"></span>
+									</td>
+									<td>
+										<span th:text="${item.book.publisher.pname}"></span>
+									</td>
+									<td>
+										<span th:text="${item.book.price}"></span>
+									</td>
+									<td>
+										<span th:text="${item.num}"></span>
+									</td>
+									<td>
+										<span th:text="${#numbers.formatDecimal(item.num*item.book.price,1,'COMMA',2,'POINT')}"></span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<button th:if="${userorder.paid}==0" type="submit" class="btn btn-primary" onclick="pay()">
+							<i class="bi bi-credit-card"></i>
+							<span>支付订单</span>
+						</button>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

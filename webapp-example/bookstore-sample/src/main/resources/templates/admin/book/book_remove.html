@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::admin_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link active" href="/admin/book/list">图书管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/booktype/list">分类管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/publisher/list">出版社管理</a>
+							</li>
+						</ul>
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/admin/user/list">管理</a>
+							<a class="breadcrumb-item" href="/admin/book/list">图书管理</a>
+							<span class="breadcrumb-item active">删除图书</span>
+						</nav>
+
+						<div th:switch="${deleteState}">
+							<div th:case="1" class="alert alert-danger alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>删除失败！请重新尝试。</strong>
+							</div>
+							<div th:case="2" class="alert alert-success alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>删除成功！图书删除成功，返回列表可查看所有图书。</strong>
+							</div>
+						</div>
+
+						<form th:if="${bookList}!=null and ${#lists.size(bookList)}!=0" action="/admin/book/remove" method="post">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>图书ID</th>
+										<th>图书名称</th>
+										<th>ISBN</th>
+										<th>单价</th>
+										<th>库存</th>
+										<th>图书分类</th>
+										<th>出版社</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="item:${bookList}">
+										<td>
+											<input type="hidden" name="bid" th:value="${item.bid}" />
+											<font th:text="${item.bid}"></font>
+										</td>
+										<td>
+											<span th:text="${item.bname}"></span>
+										</td>
+										<td>
+											<span th:text="${item.isbn}"></span>
+										</td>
+										<td>
+											<span th:text="${item.price}"></span>
+										</td>
+										<td>
+											<span th:text="${item.stock}"></span>
+										</td>
+										<td>
+											<span th:text="${item.booktype.tname}"></span>
+										</td>
+										<td>
+											<span th:text="${item.publisher.pname}"></span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div>
+								<button type="submit" class="btn btn-primary">
+									<i class="bi bi-eraser"></i>
+									<span>确认删除</span>
+								</button>
+							</div>
+						</form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

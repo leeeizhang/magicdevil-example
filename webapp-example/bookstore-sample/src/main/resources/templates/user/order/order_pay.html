@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::user_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/user/order/list">管理</a>
+							<a class="breadcrumb-item" href="/user/order/list">订单管理</a>
+							<span class="breadcrumb-item active">支付订单</span>
+						</nav>
+
+						<div th:switch="${payState}">
+							<div th:case="1" class="alert alert-danger alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>支付失败，请重新尝试！</strong>
+							</div>
+							<div th:case="2" class="alert alert-success alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>支付成功！订单支付成功，返回列表可查看所有订单。</strong>
+							</div>
+						</div>
+
+						<form th:if="${orderList != null}" action="/user/order/pay" method="post">
+							<table class="table table-hover" style="margin-top: 10px">
+								<thead>
+									<tr>
+										<th>订单ID</th>
+										<th>地址</th>
+										<th>总数</th>
+										<th>金额</th>
+										<th>状态</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="item:${orderList}">
+										<td>
+											<input type="hidden" name="uoid" th:value="${item.uoid}" />
+											<span th:text="${item.uoid}"></span>
+										</td>
+										<td>
+											<span th:text="${item.address.location}"></span>
+										</td>
+										<td>
+											<span th:text="${item.total}"></span>
+										</td>
+										<td>
+											<span th:text="${#numbers.formatDecimal(item.price,1,'COMMA',2,'POINT')}"></span>
+										</td>
+										<td th:switch="${item.paid}">
+											<a th:case="0">待支付</a>
+											<a th:case="1">已支付</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="row" style="margin-top: 40px">
+								<div class="col-6">
+									<h3>
+										<span>总计金额：</span>
+										<span th:text="${#numbers.formatDecimal(totalPrice,1,'COMMA',2,'POINT')}+'元'"></span>
+									</h3>
+								</div>
+								<div class="col-6 d-flex justify-content-end">
+									<button type="submit" class="btn btn-primary">
+										<i class="bi bi-eraser"></i>
+										<span>确认支付</span>
+									</button>
+								</div>
+							</div>
+						</form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

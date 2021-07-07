@@ -1,0 +1,20 @@
+server:
+ port: 80
+
+db:
+ url: jdbc:mysql://192.168.68.132:3306/bookstore
+ username: root
+ password: mysqladmin
+
+spark:
+ master: local[3]
+ appname: BookStoreRecommendation
+ panel-url: http://localhost:4040/jobs/
+ als: 
+  maxIter: 4
+  rank: 20
+  numBlocks: 1
+  alpha: 0.01
+  lambda: 0.01
+  regParm: 0.01
+  recNum: 4

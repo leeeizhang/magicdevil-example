@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+<script type="text/javascript">
+	function deleteSelect() {
+		var ids = document.getElementsByName('selectedCheckBox');
+		var input = "/admin/career/remove?deleteBunch=true";
+		var num = 0;
+		for (var i = 0; i < ids.length; i++) {
+			if (ids[i].checked) {
+				input += "&cid=" + ids[i].value;
+				num++;
+			}
+		}
+		if (num != 0) {
+			location.href = input;
+		}
+	}
+	function jumpPage(currentPage) {
+		location.href = '/admin/career/list?currentPage=' + currentPage;
+	}
+	function prePage(currentPage) {
+		jumpPage(currentPage - 1);
+	}
+	function nextPage(currentPage) {
+		jumpPage(currentPage + 1);
+	}
+</script>
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::admin_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/user/list">用户管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/degree/list">学历管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link active" href="/admin/career/list">职业管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/manager/list">管理员列表</a>
+							</li>
+						</ul>
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/admin/user/list">管理</a>
+							<a class="breadcrumb-item" href="/admin/career/list">职业管理</a>
+							<span class="breadcrumb-item active">职业列表</span>
+						</nav>
+
+						<div class="row">
+							<div class="col-12">
+								<div class="btn-group btn-group">
+									<button class="btn btn-outline-primary" onclick="javascrtpt:window.location.href='/admin/career/insert';return false;">
+										<i class="bi bi-plus-circle"></i>
+										<span>新建职位</span>
+									</button>
+									<button class="btn btn-outline-primary" onclick="deleteSelect();return false;">
+										<i class="bi bi-eraser"></i>
+										<span>删除所选</span>
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<table class="table table-hover" style="margin-top: 10px">
+							<thead>
+								<tr>
+									<th>选中</th>
+									<th>职位ID</th>
+									<th>职位名称</th>
+									<th>操作</th>
+									<th>修改</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item:${careerList}">
+									<td>
+										<input type="checkbox" name="selectedCheckBox" th:value="${item.cid}">
+									</td>
+									<td>
+										<span th:text="${item.cid}"></span>
+									</td>
+									<td>
+										<span th:text="${item.cname}"></span>
+									</td>
+									<td>
+										<a th:href="@{/admin/user/list(searchType='cid',searchValue=${item.cid})}">全部用户</a>
+									</td>
+									<td>
+										<a th:href="@{/admin/career/update(cid=${item.cid})}">修改</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="d-flex justify-content-center" th:if="${(allCount + pageSize - 1) / pageSize}  <= 5">
+							<ul class="pagination pagination">
+								<li class="page-item" th:classappend="${currentPage eq 1} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="prePage([[${currentPage}]])">上一页</a>
+								</li>
+								<li th:each="pageIndex : ${#numbers.sequence(1, ((allCount + pageSize - 1) / pageSize) == 0 ? 1 : ((allCount + pageSize - 1) / pageSize))}" class="page-item"
+									th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li class="page-item" th:classappend="${(allCount + pageSize - 1) / pageSize <= currentPage} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="nextPage([[${currentPage}]])">下一页</a>
+								</li>
+							</ul>
+						</div>
+
+						<div class="d-flex justify-content-center" th:if="${(allCount + pageSize - 1) / pageSize}  > 5">
+							<ul class="pagination pagination">
+								<li class="page-item" th:classappend="${currentPage eq 1} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="prePage([[${currentPage}]])">上一页</a>
+								</li>
+								<li th:if="${currentPage <= 3}" th:each="pageIndex : ${#numbers.sequence(1, 5)}" class="page-item" th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li th:if="${currentPage > 3 and currentPage < (allCount + pageSize - 1) / pageSize - 1}" th:each="pageIndex : ${#numbers.sequence(currentPage - 2, currentPage + 2)}"
+									class="page-item" th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li th:if="${currentPage >= (allCount + pageSize - 1) / pageSize - 1}"
+									th:each="pageIndex : ${#numbers.sequence((allCount + pageSize - 1) / pageSize - 4, (allCount + pageSize - 1) / pageSize)}" class="page-item"
+									th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li class="page-item" th:classappend="${(allCount + pageSize - 1) / pageSize <= currentPage} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="nextPage([[${currentPage}]])">下一页</a>
+								</li>
+							</ul>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

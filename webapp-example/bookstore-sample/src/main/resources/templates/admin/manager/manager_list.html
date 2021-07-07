@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+<script type="text/javascript">
+	function jumpPage(currentPage) {
+		location.href = '/admin/manager/list?currentPage=' + currentPage;
+	}
+	function prePage(currentPage) {
+		jumpPage(currentPage - 1);
+	}
+	function nextPage(currentPage) {
+		jumpPage(currentPage + 1);
+	}
+</script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::admin_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/user/list">用户管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/degree/list">学历管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/career/list">职业管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link active" href="/admin/manager/list">管理员列表</a>
+							</li>
+						</ul>
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/admin/user/list">管理</a>
+							<a class="breadcrumb-item" href="/admin/manager/list">管理员管理</a>
+							<span class="breadcrumb-item active">管理员列表</span>
+						</nav>
+
+						<table class="table table-hover" style="margin-top: 10px">
+							<thead>
+								<tr>
+									<th>管理员ID</th>
+									<th>姓名</th>
+									<th>性别</th>
+									<th>生日</th>
+									<th>电话</th>
+									<th>邮箱</th>
+									<th>职业</th>
+									<th>学位</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item:${userList}">
+									<td>
+										<font th:text="${item.uid}"></font>
+									</td>
+									<td>
+										<font th:text="${item.uname}"></font>
+									</td>
+									<td>
+										<font th:text="${item.sex==0?'男':'女'}"></font>
+									</td>
+									<td>
+										<font th:text="${#dates.format(item.birth, 'yyyy年MM月dd日')}"></font>
+									</td>
+									<td>
+										<font th:text="${item.phone}"></font>
+									</td>
+									<td>
+										<font th:text="${item.email}"></font>
+									</td>
+									<td>
+										<font th:text="${item.career.cname}"></font>
+									</td>
+									<td>
+										<font th:text="${item.degree.dname}"></font>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="d-flex justify-content-center" th:if="${(allCount + pageSize - 1) / pageSize}  <= 5">
+							<ul class="pagination pagination">
+								<li class="page-item" th:classappend="${currentPage eq 1} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="prePage([[${currentPage}]])">上一页</a>
+								</li>
+								<li th:each="pageIndex : ${#numbers.sequence(1, ((allCount + pageSize - 1) / pageSize) == 0 ? 1 : ((allCount + pageSize - 1) / pageSize))}" class="page-item"
+									th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li class="page-item" th:classappend="${(allCount + pageSize - 1) / pageSize <= currentPage} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="nextPage([[${currentPage}]])">下一页</a>
+								</li>
+							</ul>
+						</div>
+
+						<div class="d-flex justify-content-center" th:if="${(allCount + pageSize - 1) / pageSize}  > 5">
+							<ul class="pagination pagination">
+								<li class="page-item" th:classappend="${currentPage eq 1} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="prePage([[${currentPage}]])">上一页</a>
+								</li>
+								<li th:if="${currentPage <= 3}" th:each="pageIndex : ${#numbers.sequence(1, 5)}" class="page-item" th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li th:if="${currentPage > 3 and currentPage < (allCount + pageSize - 1) / pageSize - 1}" th:each="pageIndex : ${#numbers.sequence(currentPage - 2, currentPage + 2)}"
+									class="page-item" th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li th:if="${currentPage >= (allCount + pageSize - 1) / pageSize - 1}"
+									th:each="pageIndex : ${#numbers.sequence((allCount + pageSize - 1) / pageSize - 4, (allCount + pageSize - 1) / pageSize)}" class="page-item"
+									th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li class="page-item" th:classappend="${(allCount + pageSize - 1) / pageSize <= currentPage} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="nextPage([[${currentPage}]])">下一页</a>
+								</li>
+							</ul>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

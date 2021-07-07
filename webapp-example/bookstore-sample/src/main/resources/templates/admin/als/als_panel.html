@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+<script>
+	$(document).ready(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+</script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::admin_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link active" href="/admin/als/panel">ALS推荐系统</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" th:href="${panelURL}">Spark集群管理</a>
+							</li>
+						</ul>
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/admin/user/list">管理</a>
+							<a class="breadcrumb-item" href="/admin/als/panel">ALS推荐系统</a>
+							<span class="breadcrumb-item active">模型配置</span>
+						</nav>
+
+						<div th:switch="${updateState}">
+							<div th:case="1" class="alert alert-danger alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>修改失败！请重新尝试。</strong>
+							</div>
+							<div th:case="2" class="alert alert-success alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>修改成功！ASL配置修改成功，返回购书页面查看效果。</strong>
+							</div>
+						</div>
+
+						<form action="/admin/als/panel" method="post">
+							<div class="form-group">
+								<label for="maxIter">
+									<span>最大迭代次数maxIter：</span>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="ALS算法重复计算次数">
+										<i class="bi bi-question-circle"></i>
+									</a>
+								</label>
+								<input type="number" class="form-control" name="maxIter" id="maxIter" th:value="${alsConfig.maxIter}" />
+							</div>
+							<div class="form-group">
+								<label for="rank">
+									<span>矩阵分解低维维数rank：</span>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="矩阵分解时对应的低维的维数">
+										<i class="bi bi-question-circle"></i>
+									</a>
+								</label>
+								<input type="number" class="form-control" name="rank" id="rank" th:value="${alsConfig.rank}" />
+							</div>
+							<div class="form-group">
+								<label for="numBlocks">
+									<span>分布式迭代块数Blocks：</span>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="分布式节点迭代计算体量，取值1~10">
+										<i class="bi bi-question-circle"></i>
+									</a>
+								</label>
+								<input type="number" class="form-control" name="numBlocks" id="numBlocks" th:value="${alsConfig.numBlocks}" />
+							</div>
+							<div class="form-group">
+								<label for="alpha">
+									<span>隐式反馈信心阈值Alpha：</span>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="隐式反馈信心阈值越大则越认为用户和他没有评分的物品之间没有关联">
+										<i class="bi bi-question-circle"></i>
+									</a>
+								</label>
+								<input type="text" class="form-control" name="alpha" id="alpha" th:value="${alsConfig.alpha}" />
+							</div>
+							<div class="form-group">
+								<label for="alpha">
+									<span>拟合程度lambda：</span>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="主要用于控制模型的拟合程度，增强模型泛化能力，取值越大，则正则化惩罚越强">
+										<i class="bi bi-question-circle"></i>
+									</a>
+								</label>
+								<input type="text" class="form-control" name="lambda" id="lambda" th:value="${alsConfig.lambda}" />
+							</div>
+							<div class="form-group">
+								<label for="regParam">
+									<span>正则化参数regParam：</span>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="训练模型前是否需要对训练特征进行标准化处理">
+										<i class="bi bi-question-circle"></i>
+									</a>
+								</label>
+								<input type="text" class="form-control" name="regParam" id="regParam" th:value="${alsConfig.regParam}" />
+							</div>
+							<div class="form-group">
+								<label for="recNum">
+									<span>推荐个数RecNum：</span>
+									<a href="#" data-toggle="tooltip" data-placement="top" title="每次为用户推荐的产品个数">
+										<i class="bi bi-question-circle"></i>
+									</a>
+								</label>
+								<input type="number" class="form-control" name="recNum" id="recNum" th:value="${alsConfig.recNum}" />
+							</div>
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary">
+									<i class="bi bi-plus-circle"></i>
+									<span>保存配置</span>
+								</button>
+								<button type="reset" class="btn btn-secondary">
+									<i class="bi bi-eraser"></i>
+									<span>重置</span>
+								</button>
+							</div>
+						</form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

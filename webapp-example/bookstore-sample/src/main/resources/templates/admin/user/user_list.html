@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+<script type="text/javascript">
+	function deleteSelect() {
+		var ids = document.getElementsByName('selectedCheckBox');
+		var input = "/admin/user/remove?deleteBunch=true";
+		var num = 0;
+		for (var i = 0; i < ids.length; i++) {
+			if (ids[i].checked) {
+				input += "&uid=" + ids[i].value;
+				num++;
+			}
+		}
+		if (num != 0) {
+			location.href = input;
+		}
+	}
+	function search() {
+		var obj = document.getElementById("searchType");
+		var index = obj.selectedIndex;
+		var searchType = obj.options[index].value;
+		var searchValue = document.getElementById('searchValue').value;
+
+		location.href = '/admin/user/list?currentPage=1'
+				+ (searchValue != '' ? '&searchType=' + searchType
+						+ '&searchValue=' + searchValue : '');
+	}
+	function jumpPage(currentPage) {
+		var obj = document.getElementById("searchType");
+		var index = obj.selectedIndex;
+		var searchType = obj.options[index].value;
+		var searchValue = document.getElementById('searchValue').value;
+		location.href = '/admin/user/list?currentPage='
+				+ currentPage
+				+ (searchValue != '' ? '&searchType=' + searchType
+						+ '&searchValue=' + searchValue : '');
+	}
+	function prePage(currentPage) {
+		jumpPage(currentPage - 1);
+	}
+	function nextPage(currentPage) {
+		jumpPage(currentPage + 1);
+	}
+</script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::admin_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link active" href="/admin/user/list">用户管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/degree/list">学历管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/career/list">职业管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/manager/list">管理员列表</a>
+							</li>
+						</ul>
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/admin/user/list">管理</a>
+							<a class="breadcrumb-item" href="/admin/user/list">用户管理</a>
+							<span class="breadcrumb-item active">用户列表</span>
+						</nav>
+
+						<div class="row">
+							<div class="col-7">
+								<div class="btn-group btn-group">
+									<button class="btn btn-outline-primary" onclick="javascrtpt:window.location.href='/admin/user/insert';return false;">
+										<i class="bi bi-plus-circle"></i>
+										<span>新建用户</span>
+									</button>
+									<button class="btn btn-outline-primary" onclick="deleteSelect();return false;">
+										<i class="bi bi-eraser"></i>
+										<span>删除所选</span>
+									</button>
+								</div>
+							</div>
+							<div class="col-5">
+								<div class="input-group mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group">
+											<select id="searchType" name="searchType">
+												<option value="uid" th:selected="${searchType eq 'uid'}">ID</option>
+												<option value="uname" th:selected="${searchType eq 'uname'}">姓名</option>
+												<option value="phone" th:selected="${searchType eq 'phone'}">电话</option>
+												<option value="email" th:selected="${searchType eq 'email'}">邮箱</option>
+											</select>
+										</span>
+									</div>
+									<input type="text" class="form-control col-9" id="searchValue" name="searchValue" th:value="${searchValue}" />
+									<div class="input-group-append">
+										<button type="button" class="btn btn-outline-secondary btn-sm" onclick="search();return false;">
+											<i class="bi bi-search"></i>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<table class="table table-hover" style="margin-top: 10px">
+							<thead>
+								<tr>
+									<th>选中</th>
+									<th>ID</th>
+									<th>姓名</th>
+									<th>性别</th>
+									<th>生日</th>
+									<th>电话</th>
+									<th>邮箱</th>
+									<th>职业</th>
+									<th>学位</th>
+									<th>身份</th>
+									<th>修改</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item:${userList}">
+									<td>
+										<input type="checkbox" name="selectedCheckBox" th:value="${item.uid}">
+									</td>
+									<td>
+										<span th:text="${item.uid}"></span>
+									</td>
+									<td>
+										<span th:text="${item.uname}"></span>
+									</td>
+									<td>
+										<span th:text="${item.sex==0?'男':'女'}"></span>
+									</td>
+									<td>
+										<span th:text="${#dates.format(item.birth, 'yyyy/MM/dd')}"></span>
+									</td>
+									<td>
+										<span th:text="${item.phone}"></span>
+									</td>
+									<td>
+										<span th:text="${item.email}"></span>
+									</td>
+									<td>
+										<span th:text="${item.career.cname}"></span>
+									</td>
+									<td>
+										<span th:text="${item.degree.dname}"></span>
+									</td>
+									<td>
+										<span th:text="${item.admin_tag==1?'管理员':'用户'}"></span>
+									</td>
+									<td>
+										<a th:href="@{/admin/user/update(uid=${item.uid})}">修改</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="d-flex justify-content-center" th:if="${(allCount + pageSize - 1) / pageSize}  <= 5">
+							<ul class="pagination pagination">
+								<li class="page-item" th:classappend="${currentPage eq 1} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="prePage([[${currentPage}]])">上一页</a>
+								</li>
+								<li th:each="pageIndex : ${#numbers.sequence(1, ((allCount + pageSize - 1) / pageSize) == 0 ? 1 : ((allCount + pageSize - 1) / pageSize))}" class="page-item"
+									th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li class="page-item" th:classappend="${(allCount + pageSize - 1) / pageSize <= currentPage} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="nextPage([[${currentPage}]])">下一页</a>
+								</li>
+							</ul>
+						</div>
+
+						<div class="d-flex justify-content-center" th:if="${(allCount + pageSize - 1) / pageSize}  > 5">
+							<ul class="pagination pagination">
+								<li class="page-item" th:classappend="${currentPage eq 1} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="prePage([[${currentPage}]])">上一页</a>
+								</li>
+								<li th:if="${currentPage <= 3}" th:each="pageIndex : ${#numbers.sequence(1, 5)}" class="page-item" th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li th:if="${currentPage > 3 and currentPage < (allCount + pageSize - 1) / pageSize - 1}" th:each="pageIndex : ${#numbers.sequence(currentPage - 2, currentPage + 2)}"
+									class="page-item" th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li th:if="${currentPage >= (allCount + pageSize - 1) / pageSize - 1}"
+									th:each="pageIndex : ${#numbers.sequence((allCount + pageSize - 1) / pageSize - 4, (allCount + pageSize - 1) / pageSize)}" class="page-item"
+									th:classappend="${currentPage eq pageIndex} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="jumpPage([[${pageIndex}]])" th:text="${pageIndex}"></a>
+								</li>
+								<li class="page-item" th:classappend="${(allCount + pageSize - 1) / pageSize <= currentPage} ? 'disabled' : '' ">
+									<a class="page-link" th:onclick="nextPage([[${currentPage}]])">下一页</a>
+								</li>
+							</ul>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

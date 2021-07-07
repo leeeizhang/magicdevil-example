@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::user_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/user/order/list">管理</a>
+							<a class="breadcrumb-item" href="/user/order/list">订单管理</a>
+							<span class="breadcrumb-item active">新建订单</span>
+						</nav>
+
+						<div th:switch="${insertState}">
+							<div th:case="1" class="alert alert-danger alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>新建失败！请重新尝试。</strong>
+							</div>
+							<div th:case="2" class="alert alert-success alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>添加成功！订单新建成功，返回列表可查看新增订单。</strong>
+							</div>
+						</div>
+
+						<form action="/user/order/insert" method="post">
+							<div class="form-group">
+								<label for="uoid">订单ID：</label>
+								<select class="custom-select" name="uoid" id="uoid">
+									<option th:each="userOrder:${unpaidOrderList}" th:value="${userOrder.uoid}" th:text="${userOrder.uoid}"></option>
+									<option value="-1" th:text="新建订单"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="location">地址：</label>
+								<select class="custom-select" name="aid" id="aid">
+									<option th:each="address:${addressList}" th:value="${address.aid}" th:text="${address.location}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="bid">图书ID：</label>
+								<input type="text" class="form-control" name="bid" id="bid" readonly="readonly" th:value="${book.bid}" />
+							</div>
+							<div class="form-group">
+								<label for="bname">图书名：</label>
+								<input type="text" class="form-control" name="bname" id="bname" readonly="readonly" th:value="${book.bname}" />
+							</div>
+							<div class="form-group">
+								<label for="isbn">ISBN：</label>
+								<input type="text" class="form-control" name="isbn" id="isbn" readonly="readonly" th:value="${book.isbn}" />
+							</div>
+							<div class="form-group">
+								<label for="price">价格：</label>
+								<input type="text" class="form-control" name="price" id="price" readonly="readonly" th:value="${book.price}" />
+							</div>
+							<div class="form-group">
+								<label for="stock">库存：</label>
+								<input type="number" class="form-control" name="stock" id="stock" readonly="readonly" th:value="${book.stock}" />
+							</div>
+							<div class="form-group">
+								<label for="booktype">书类：</label>
+								<input type="text" class="form-control" name="booktype" id="booktype" readonly="readonly" th:value="${book.booktype.tname}" />
+							</div>
+							<div class="form-group">
+								<label for="publisher">出版社：</label>
+								<input type="text" class="form-control" name="publisher" id="publisher" readonly="readonly" th:value="${book.publisher.pname}" />
+							</div>
+							<div class="form-group">
+								<label for="num">数量：</label>
+								<input type="number" class="form-control" name="num" id="num" value="1" />
+							</div>
+
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary">
+									<i class="bi bi-plus-circle"></i>
+									<span>加入订单</span>
+								</button>
+								<button type="reset" class="btn btn-secondary">
+									<i class="bi bi-eraser"></i>
+									<span>重置</span>
+								</button>
+							</div>
+
+						</form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

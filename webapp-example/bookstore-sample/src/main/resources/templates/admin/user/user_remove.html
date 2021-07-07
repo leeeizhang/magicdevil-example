@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::admin_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link active" href="/admin/user/list">用户管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/degree/list">学历管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/career/list">职业管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/manager/list">管理员列表</a>
+							</li>
+						</ul>
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/admin/user/list">管理</a>
+							<a class="breadcrumb-item" href="/admin/user/list">用户管理</a>
+							<span class="breadcrumb-item active">删除用户</span>
+						</nav>
+
+						<div th:switch="${deleteState}">
+							<div th:case="1" class="alert alert-danger alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>删除失败！请重新尝试。</strong>
+							</div>
+							<div th:case="2" class="alert alert-success alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>删除成功！用户删除成功，返回列表可查看所有用户。</strong>
+							</div>
+						</div>
+
+						<form th:if="${userList}!=null and ${#lists.size(userList)}!=0" action="/admin/user/remove" method="post">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>ID</th>
+										<th>姓名</th>
+										<th>性别</th>
+										<th>生日</th>
+										<th>电话</th>
+										<th>邮箱</th>
+										<th>职业</th>
+										<th>学位</th>
+										<th>身份</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="item:${userList}">
+										<td>
+											<input type="hidden" name="uid" th:value="${item.uid}" />
+											<span th:text="${item.uid}"></span>
+										</td>
+										<td>
+											<span th:text="${item.uname}"></span>
+										</td>
+										<td>
+											<span th:text="${item.sex==0?'男':'女'}"></span>
+										</td>
+										<td>
+											<span th:text="${#dates.format(item.birth, 'yyyy/MM/dd')}"></span>
+										</td>
+										<td>
+											<span th:text="${item.phone}"></span>
+										</td>
+										<td>
+											<span th:text="${item.email}"></span>
+										</td>
+										<td>
+											<span th:text="${item.career.cname}"></span>
+										</td>
+										<td>
+											<span th:text="${item.degree.dname}"></span>
+										</td>
+										<td>
+											<span th:text="${item.admin_tag==1?'管理员':'用户'}"></span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							<div>
+								<button type="submit" class="btn btn-primary">
+									<i class="bi bi-eraser"></i>
+									<span>确认删除</span>
+								</button>
+							</div>
+						</form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

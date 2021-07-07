@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+<style type="text/css">
+.bg {
+	background: url(/img/login_bg.png) no-repeat center fixed;
+	background-size: contain;
+}
+</style>
+</head>
+
+<body class="bg">
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container" style="margin-top: 200px; margin-bottom: 120px;">
+		<div class="row">
+			<div class="col-4 offset-6">
+				<div class="card">
+					<div class="card-body">
+
+
+						<form action="/user/login" method="post">
+
+							<div class="form-group">
+								<label for="usr">用户名：</label>
+								<input type="text" class="form-control" name="username" id="username" value="Ryan" />
+							</div>
+							<div class="form-group">
+								<label for="psw">密码：</label>
+								<input type="password" class="form-control" name="password" id="password" value="000000" />
+							</div>
+							<div th:if="${loginFail}" class="alert alert-danger alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>登陆失败，请重新登录！</strong>
+							</div>
+
+							<div class="form-group d-flex justify-content-center" style="margin-top: 30px">
+								<button type="submit" class="btn btn-primary" style="margin-left: 5px; margin-right: 5px">
+									<i class="bi bi-chevron-double-right"></i>
+									<span>登录</span>
+								</button>
+								<button type="reset" class="btn btn-secondary" style="margin-left: 5px; margin-right: 5px">
+									<i class="bi bi-eraser"></i>
+									<span>重置</span>
+								</button>
+							</div>
+
+						</form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

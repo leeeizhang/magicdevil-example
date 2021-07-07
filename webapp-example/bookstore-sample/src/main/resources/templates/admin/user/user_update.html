@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<title>在线购书推荐系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" href="/icon/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/shards.min.css">
+<link rel="stylesheet" href="/css/sidebar.css">
+<script src="/js/popper.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/shards.min.js"></script>
+</head>
+
+<body>
+
+	<div th:include="header::common_header"></div>
+
+	<div class="container-fluid" style="margin-top: 90px; margin-bottom: 30px;">
+		<div class="row">
+			<div class="col-2" th:include="bar::admin_bar"></div>
+			<div class="col-10">
+				<div class="card">
+					<div class="card-body">
+
+
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link active" href="/admin/user/list">用户管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/degree/list">学历管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/career/list">职业管理</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin/manager/list">管理员列表</a>
+							</li>
+						</ul>
+
+						<nav class="breadcrumb" style="margin-top: 10px">
+							<a class="breadcrumb-item" href="/admin/user/list">管理</a>
+							<a class="breadcrumb-item" href="/admin/user/list">用户管理</a>
+							<span class="breadcrumb-item active">修改用户</span>
+						</nav>
+
+						<div th:switch="${updateState}">
+							<div th:case="1" class="alert alert-danger alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>修改失败！请重新尝试。</strong>
+							</div>
+							<div th:case="2" class="alert alert-success alert-dismissible fade show">
+								<button type="button" class="close" data-dismiss="alert">&times;</button>
+								<strong>修改成功！用户修改成功，返回列表可查看修改用户。</strong>
+							</div>
+						</div>
+
+						<form action="/admin/user/update" method="post">
+							<div class="form-group">
+								<label for="uid">用户ID：</label>
+								<input type="text" class="form-control" name="uid" id="uid" readonly="readonly" th:value="${user.uid}" />
+							</div>
+							<div class="form-group">
+								<label for="usr">用户名：</label>
+								<input type="text" class="form-control" name="uname" id="uname" th:value="${user.uname}" />
+							</div>
+							<div class="form-group">
+								<label for="psw">密码：</label>
+								<input type="password" class="form-control" name="password" id="password" th:value="${user.password}" />
+							</div>
+							<div class="form-group">
+								<label for="sex">性别：</label>
+								<select class="custom-select" name="sex" id="sex">
+									<option value="0" th:selected="${user.sex eq 0}">男</option>
+									<option value="1" th:selected="${user.sex eq 1}">女</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="birth">生日：</label>
+								<input type="text" class="form-control" name="birth" id="birth" value="2000-01-01" />
+								<script>
+									$('#birth').datepicker({
+										format : 'yyyy-mm-dd',
+										calendarWeeks : true,
+										autoclose : true,
+										todayHighlight : true,
+										viewDate : new Date()
+									});
+								</script>
+							</div>
+							<div class="form-group">
+								<label for="phone">电话：</label>
+								<input type="text" class="form-control" name="phone" id="phone" th:value="${user.phone}" />
+							</div>
+							<div class="form-group">
+								<label for="email">邮箱：</label>
+								<input type="text" class="form-control" name="email" id="email" th:value="${user.email}" />
+							</div>
+							<div class="form-group">
+								<label for="career">职业：</label>
+								<select class="custom-select" name="career_id" id="career_id">
+									<option th:each="career:${careerList}" th:value="${career.cid}" th:text="${career.cname}" th:selected="${user.career.cid eq career.cid}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="degree">学位：</label>
+								<select class="custom-select" name="degree_id" id="degree_id">
+									<option th:each="degree:${degreeList}" th:value="${degree.did}" th:text="${degree.dname}" th:selected="${user.degree.did eq degree.did}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="admin_tag">管理员：</label>
+								<select class="custom-select" name="admin_tag" id="admin_tag">
+									<option value="0" th:selected="${user.admin_tag==0}">否</option>
+									<option value="1" th:selected="${user.admin_tag==1}">是</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary">
+									<i class="bi bi-pencil-square"></i>
+									<span>修改用户</span>
+								</button>
+								<button type="reset" class="btn btn-secondary">
+									<i class="bi bi-eraser"></i>
+									<span>重置</span>
+								</button>
+							</div>
+						</form>
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
