@@ -26,7 +26,7 @@ public class SensorSource implements SourceFunction<SensorReading> {
             ctx.collect(new SensorReading(
                     sensorTemplate.get(Math.abs((new Random()).nextInt()) % sensorTemplate.size()),
                     (new Random()).nextGaussian() * 10,
-                    new Date()
+                    (new Date()).getTime()
             ));
             Thread.sleep(100);
         }

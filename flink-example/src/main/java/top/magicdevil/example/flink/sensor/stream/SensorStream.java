@@ -41,7 +41,7 @@ public class SensorStream {
                             Tuple2<SensorReading, String> value1,
                             Tuple2<SensorReading, String> value2) throws Exception {
                         if (value1.f0.getTemporary() < value2.f0.getTemporary()
-                                && value1.f0.getTimestamp().before(value2.f0.getTimestamp())) {
+                                && value1.f0.getTimestamp() < value2.f0.getTimestamp()) {
                             return value2;
                         }
                         return value1;

@@ -5,12 +5,12 @@ import java.util.Date;
 public class SensorReading {
     private String sensor;
     private Double temporary;
-    private Date timestamp;
+    private Long timestamp;
 
     public SensorReading() {
     }
 
-    public SensorReading(String sensor, Double temporary, Date timestamp) {
+    public SensorReading(String sensor, Double temporary, Long timestamp) {
         this.sensor = sensor;
         this.temporary = temporary;
         this.timestamp = timestamp;
@@ -32,11 +32,11 @@ public class SensorReading {
         this.temporary = temporary;
     }
 
-    public Date getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
