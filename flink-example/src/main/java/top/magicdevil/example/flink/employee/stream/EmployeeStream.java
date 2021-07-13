@@ -10,6 +10,7 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.util.OutputTag;
 import top.magicdevil.example.flink.employee.bean.Employee;
 import top.magicdevil.example.flink.employee.bean.Salary;
 import top.magicdevil.example.flink.employee.source.EmpSource;
@@ -17,10 +18,10 @@ import top.magicdevil.example.flink.employee.source.SalarySource;
 
 import java.time.Duration;
 
-// TODO: JoinedStream meet timestamp issue to fix
-
 public class EmployeeStream {
+
     public static void main(String[] args) throws Exception {
+
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         DataStream<Employee> empStream = env.addSource(new EmpSource())
@@ -35,15 +36,22 @@ public class EmployeeStream {
                         .withTimestampAssigner((event, assigner) -> event.getPayday())
                 );
 
-        SingleOutputStreamOperator<Tuple3<Salary, Integer, Double>> reducedStream = salaryStream
+        OutputTag<Tuple3<Salary, Integer, Double>> reducedOutputTag = new OutputTag<>("reducedOutputTag") {
+        };
+
+        SingleOutputStreamOperator<Tuple3<Salary, Integer, Double>> mapStream = salaryStream
                 .map(new MapFunction<Salary, Tuple3<Salary, Integer, Double>>() {
                     @Override
                     public Tuple3<Salary, Integer, Double> map(Salary value) throws Exception {
                         return new Tuple3<>(value, 1, value.getSalary());
                     }
-                })
+                });
+
+        SingleOutputStreamOperator<Tuple3<Salary, Integer, Double>> reducedStream = mapStream
                 .keyBy(tup -> tup.f0.getEid())
                 .window(TumblingEventTimeWindows.of(Time.days(30 * 48)))
+                .allowedLateness(Time.days(30 * 48))
+                .sideOutputLateData(reducedOutputTag)
                 .reduce(new ReduceFunction<Tuple3<Salary, Integer, Double>>() {
                     @Override
                     public Tuple3<Salary, Integer, Double> reduce(
@@ -54,8 +62,10 @@ public class EmployeeStream {
                 });
 
         DataStream<Tuple3<Employee, Integer, Double>> joinedStream = reducedStream
-                .join(empStream).where(tup -> tup.f0.getEid()).equalTo(emp -> emp.getEid())
+                .join(empStream)
+                .where(tup -> tup.f0.getEid()).equalTo(emp -> emp.getEid())
                 .window(TumblingEventTimeWindows.of(Time.days(30 * 48)))
+                .allowedLateness(Time.days(30 * 48))
                 .apply(new JoinFunction<Tuple3<Salary, Integer, Double>, Employee, Tuple3<Employee, Integer, Double>>() {
                     @Override
                     public Tuple3<Employee, Integer, Double> join(
@@ -67,6 +77,10 @@ public class EmployeeStream {
 
         joinedStream.print();
 
+        reducedStream.getSideOutput(reducedOutputTag).print("sideOutput");
+
         env.execute();
+
     }
+
 }
