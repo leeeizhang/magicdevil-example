@@ -17,7 +17,7 @@ public class GaussianSourceFunction implements SourceFunction<GaussianNode> {
                     Math.round(Math.abs(random.nextGaussian() * 100)),
                     new Date().getTime()
             ));
-//            Thread.sleep(10);
+            Thread.sleep(100);
         }
     }
 
