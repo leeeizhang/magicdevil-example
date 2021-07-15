@@ -2,6 +2,7 @@ package top.magicdevil.example.flink.quickstart;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.contrib.streaming.state.RocksDBStateBackend;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
@@ -18,7 +19,8 @@ public class WordCountStream {
          * StreamExecutionEnvironment: Unbounded Stream
          */
         StreamExecutionEnvironment env = StreamExecutionEnvironment
-                .getExecutionEnvironment();
+                .getExecutionEnvironment().setParallelism(4)
+                .setStateBackend(new RocksDBStateBackend("file:///home/yzf/rocksdb/tmp"));
 
         /*
          * 在执行环境中添加数据源
