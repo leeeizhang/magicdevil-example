@@ -91,6 +91,10 @@ instance/
 # Sphinx documentation
 docs/_build/
 
+# machine learning data and checkpoint
+.data/
+.model/
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
@@ -100,9 +104,11 @@ docs/_build/
 # celery beat schedule file
 celerybeat-schedule
 workspace.xml
+
 # SageMath parsed files
 *.sage.py
 .idea/workspace.xml
+
 # Environments
 .env
 .venv
